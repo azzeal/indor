@@ -2,12 +2,14 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { DeviceCard } from "@/components/DeviceCard";
 import { AddDeviceForm } from "@/components/AddDeviceForm";
 import { GenerateDescriptionsButton } from "@/components/GenerateDescriptionsButton";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Zap, Shield } from "lucide-react";
+import { Plus, Zap, Shield, LogOut, Search, User } from "lucide-react";
 import { toast } from "sonner";
 
 interface Device {
@@ -25,7 +27,9 @@ interface Device {
 
 const Index = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const queryClient = useQueryClient();
+  const { user, signOut } = useAuth();
 
   const { data: devices, isLoading } = useQuery({
     queryKey: ['devices'],
@@ -43,6 +47,15 @@ const Index = () => {
       return data as Device[];
     },
   });
+
+  // Filter devices based on search term
+  const filteredDevices = devices?.filter(device =>
+    device.vendor_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    device.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    device.ics_type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    device.details?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    device.lovable_description?.toLowerCase().includes(searchTerm.toLowerCase())
+  ) || [];
 
   const addDeviceMutation = useMutation({
     mutationFn: async (newDevice: Omit<Device, 'id' | 'created_at' | 'updated_at'>) => {
@@ -68,6 +81,10 @@ const Index = () => {
 
   const handleAddDevice = (deviceData: Omit<Device, 'id' | 'created_at' | 'updated_at'>) => {
     addDeviceMutation.mutate(deviceData);
+  };
+
+  const handleLogout = async () => {
+    await signOut();
   };
 
   if (isLoading) {
@@ -100,6 +117,19 @@ const Index = () => {
             </div>
             
             <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2 text-sm text-gray-600">
+                <User className="h-4 w-4" />
+                <span>{user?.email}</span>
+              </div>
+              <Button
+                onClick={handleLogout}
+                variant="outline"
+                size="sm"
+                className="text-gray-600 hover:text-gray-800"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
               <GenerateDescriptionsButton />
               <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                 <DialogTrigger asChild>
@@ -119,68 +149,92 @@ const Index = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Devices</p>
-                <p className="text-2xl font-bold text-gray-900">{devices?.length || 0}</p>
-              </div>
-              <Shield className="h-8 w-8 text-blue-600" />
+        {/* Search and Stats */}
+        <div className="mb-8 space-y-6">
+          {/* Search Bar */}
+          <div className="max-w-md mx-auto">
+            <div className="relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Input
+                type="text"
+                placeholder="Search devices by vendor, product, type, or description..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-white/60 backdrop-blur-sm border-gray-200 focus:border-blue-400 focus:ring-blue-400"
+              />
             </div>
           </div>
-          
-          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">AI Descriptions</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {devices?.filter(d => d.lovable_description).length || 0}
-                </p>
+
+          {/* Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total Devices</p>
+                  <p className="text-2xl font-bold text-gray-900">{devices?.length || 0}</p>
+                </div>
+                <Shield className="h-8 w-8 text-blue-600" />
               </div>
-              <Zap className="h-8 w-8 text-purple-600" />
             </div>
-          </div>
-          
-          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Completion Rate</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {devices?.length ? Math.round((devices.filter(d => d.lovable_description).length / devices.length) * 100) : 0}%
-                </p>
+            
+            <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">AI Descriptions</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {devices?.filter(d => d.lovable_description).length || 0}
+                  </p>
+                </div>
+                <Zap className="h-8 w-8 text-purple-600" />
               </div>
-              <div className="h-8 w-8 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center">
-                <span className="text-white text-sm font-bold">%</span>
+            </div>
+            
+            <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Search Results</p>
+                  <p className="text-2xl font-bold text-gray-900">{filteredDevices.length}</p>
+                </div>
+                <div className="h-8 w-8 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center">
+                  <Search className="h-4 w-4 text-white" />
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Devices Grid */}
-        {devices && devices.length > 0 ? (
+        {filteredDevices && filteredDevices.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {devices.map((device) => (
+            {filteredDevices.map((device) => (
               <DeviceCard key={device.id} device={device} />
             ))}
           </div>
         ) : (
           <div className="text-center py-12">
             <Shield className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-600 mb-2">No devices found</h3>
-            <p className="text-gray-500 mb-6">Get started by adding your first device</p>
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Your First Device
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md">
-                <AddDeviceForm onSubmit={handleAddDevice} />
-              </DialogContent>
-            </Dialog>
+            <h3 className="text-xl font-semibold text-gray-600 mb-2">
+              {searchTerm ? 'No devices found' : 'No devices found'}
+            </h3>
+            <p className="text-gray-500 mb-6">
+              {searchTerm 
+                ? `No devices match your search "${searchTerm}"`
+                : 'Get started by adding your first device'
+              }
+            </p>
+            {!searchTerm && (
+              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Your First Device
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <AddDeviceForm onSubmit={handleAddDevice} />
+                </DialogContent>
+              </Dialog>
+            )}
           </div>
         )}
       </div>
