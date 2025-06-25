@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -55,6 +54,7 @@ export const DeviceCard = ({ device }: DeviceCardProps) => {
 
   const updateDeviceMutation = useMutation({
     mutationFn: async (updatedDevice: Partial<Device>) => {
+      console.log('Updating device with data:', updatedDevice);
       const { data, error } = await supabase
         .from('devices')
         .update(updatedDevice)
@@ -62,7 +62,10 @@ export const DeviceCard = ({ device }: DeviceCardProps) => {
         .select()
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Update error:', error);
+        throw error;
+      }
       return data;
     },
     onSuccess: () => {
@@ -78,12 +81,16 @@ export const DeviceCard = ({ device }: DeviceCardProps) => {
 
   const deleteDeviceMutation = useMutation({
     mutationFn: async (deviceId: string) => {
+      console.log('Deleting device with ID:', deviceId);
       const { error } = await supabase
         .from('devices')
         .delete()
         .eq('id', deviceId);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Delete error:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['devices'] });

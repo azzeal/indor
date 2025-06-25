@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Edit, Save, Trash2 } from "lucide-react";
+import { DeviceLinksForm } from "@/components/DeviceLinksForm";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,6 +39,11 @@ interface EditDeviceFormProps {
   onDelete: (deviceId: string) => void;
 }
 
+interface LinkPair {
+  text: string;
+  url: string;
+}
+
 const ICS_TYPES = [
   "HTTP Server",
   "Industrial Controller",
@@ -54,20 +60,37 @@ export const EditDeviceForm = ({ device, onSubmit, onDelete }: EditDeviceFormPro
     vendor_name: device.vendor_name,
     product_name: device.product_name,
     ics_type: device.ics_type || "",
-    url_text: device.url_text || "",
-    actual_url: device.actual_url || "",
     details: device.details || "",
     lovable_description: device.lovable_description || "",
+  });
+
+  // Initialize links from existing device data
+  const [linkPairs, setLinkPairs] = useState<LinkPair[]>(() => {
+    if (device.url_text && device.actual_url) {
+      return [{
+        text: device.url_text,
+        url: device.actual_url
+      }];
+    }
+    return [{ text: "", url: "" }];
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Get the first link for backward compatibility
+    const firstLink = linkPairs.find(link => link.text && link.url);
+    
     // Remove empty string values and create update object
     const updateData = Object.fromEntries(
-      Object.entries(formData).filter(([_, value]) => value !== "")
+      Object.entries({
+        ...formData,
+        url_text: firstLink?.text || null,
+        actual_url: firstLink?.url || null,
+      }).filter(([_, value]) => value !== "" && value !== null)
     );
     
+    console.log('Submitting update data:', updateData);
     onSubmit(updateData);
   };
 
@@ -75,7 +98,22 @@ export const EditDeviceForm = ({ device, onSubmit, onDelete }: EditDeviceFormPro
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleAddLink = () => {
+    setLinkPairs(prev => [...prev, { text: "", url: "" }]);
+  };
+
+  const handleRemoveLink = (index: number) => {
+    setLinkPairs(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleUpdateLink = (index: number, field: 'text' | 'url', value: string) => {
+    setLinkPairs(prev => prev.map((link, i) => 
+      i === index ? { ...link, [field]: value } : link
+    ));
+  };
+
   const handleDelete = () => {
+    console.log('Deleting device:', device.id);
     onDelete(device.id);
   };
 
@@ -152,28 +190,12 @@ export const EditDeviceForm = ({ device, onSubmit, onDelete }: EditDeviceFormPro
           />
         </div>
         
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="url_text">Link Text</Label>
-            <Input
-              id="url_text"
-              value={formData.url_text}
-              onChange={(e) => handleChange("url_text", e.target.value)}
-              placeholder="e.g., Documentation, Datasheet"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="actual_url">URL</Label>
-            <Input
-              id="actual_url"
-              type="url"
-              value={formData.actual_url}
-              onChange={(e) => handleChange("actual_url", e.target.value)}
-              placeholder="https://example.com"
-            />
-          </div>
-        </div>
+        <DeviceLinksForm
+          linkPairs={linkPairs}
+          onAddLink={handleAddLink}
+          onRemoveLink={handleRemoveLink}
+          onUpdateLink={handleUpdateLink}
+        />
         
         <div className="flex space-x-3">
           <Button 
