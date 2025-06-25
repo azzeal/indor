@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Plus, Zap, LogOut, Search, User } from "lucide-react";
 import { toast } from "sonner";
+import { BackgroundRemovalTool } from "@/components/BackgroundRemovalTool";
 
 interface Device {
   id: string;
@@ -27,6 +27,7 @@ interface Device {
 const Index = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showBackgroundRemovalTool, setShowBackgroundRemovalTool] = useState(false);
   const queryClient = useQueryClient();
   const { user, signOut } = useAuth();
 
@@ -129,6 +130,14 @@ const Index = () => {
                 <span>{user?.email}</span>
               </div>
               <Button
+                onClick={() => setShowBackgroundRemovalTool(!showBackgroundRemovalTool)}
+                variant="outline"
+                size="sm"
+                className="text-gray-600 hover:text-gray-800"
+              >
+                Remove Logo Background
+              </Button>
+              <Button
                 onClick={handleLogout}
                 variant="outline"
                 size="sm"
@@ -155,6 +164,13 @@ const Index = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
+        {/* Background Removal Tool */}
+        {showBackgroundRemovalTool && (
+          <div className="mb-8">
+            <BackgroundRemovalTool />
+          </div>
+        )}
+
         {/* Search and Stats */}
         <div className="mb-8 space-y-6">
           {/* Search Bar */}
