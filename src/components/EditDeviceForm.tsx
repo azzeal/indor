@@ -6,7 +6,18 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Edit, Save } from "lucide-react";
+import { Edit, Save, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Device {
   id: string;
@@ -24,6 +35,7 @@ interface Device {
 interface EditDeviceFormProps {
   device: Device;
   onSubmit: (device: Partial<Device>) => void;
+  onDelete: (deviceId: string) => void;
 }
 
 const ICS_TYPES = [
@@ -37,7 +49,7 @@ const ICS_TYPES = [
   "Other"
 ];
 
-export const EditDeviceForm = ({ device, onSubmit }: EditDeviceFormProps) => {
+export const EditDeviceForm = ({ device, onSubmit, onDelete }: EditDeviceFormProps) => {
   const [formData, setFormData] = useState({
     vendor_name: device.vendor_name,
     product_name: device.product_name,
@@ -61,6 +73,10 @@ export const EditDeviceForm = ({ device, onSubmit }: EditDeviceFormProps) => {
 
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleDelete = () => {
+    onDelete(device.id);
   };
 
   return (
@@ -159,13 +175,45 @@ export const EditDeviceForm = ({ device, onSubmit }: EditDeviceFormProps) => {
           </div>
         </div>
         
-        <Button 
-          type="submit" 
-          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-        >
-          <Save className="h-4 w-4 mr-2" />
-          Save Changes
-        </Button>
+        <div className="flex space-x-3">
+          <Button 
+            type="submit" 
+            className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+          >
+            <Save className="h-4 w-4 mr-2" />
+            Save Changes
+          </Button>
+          
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button 
+                type="button" 
+                variant="destructive"
+                className="px-4"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete Device</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to delete "{device.product_name}" by {device.vendor_name}? 
+                  This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDelete}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  Delete Device
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </form>
     </div>
   );

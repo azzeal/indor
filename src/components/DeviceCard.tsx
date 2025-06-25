@@ -76,8 +76,32 @@ export const DeviceCard = ({ device }: DeviceCardProps) => {
     },
   });
 
+  const deleteDeviceMutation = useMutation({
+    mutationFn: async (deviceId: string) => {
+      const { error } = await supabase
+        .from('devices')
+        .delete()
+        .eq('id', deviceId);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['devices'] });
+      setIsEditDialogOpen(false);
+      toast.success("Device deleted successfully!");
+    },
+    onError: (error) => {
+      console.error('Error deleting device:', error);
+      toast.error("Failed to delete device");
+    },
+  });
+
   const handleUpdateDevice = (deviceData: Partial<Device>) => {
     updateDeviceMutation.mutate(deviceData);
+  };
+
+  const handleDeleteDevice = (deviceId: string) => {
+    deleteDeviceMutation.mutate(deviceId);
   };
 
   return (
@@ -106,7 +130,11 @@ export const DeviceCard = ({ device }: DeviceCardProps) => {
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-md">
-              <EditDeviceForm device={device} onSubmit={handleUpdateDevice} />
+              <EditDeviceForm 
+                device={device} 
+                onSubmit={handleUpdateDevice}
+                onDelete={handleDeleteDevice}
+              />
             </DialogContent>
           </Dialog>
         </div>

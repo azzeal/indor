@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Plus, Zap, LogOut, Search, User } from "lucide-react";
 import { toast } from "sonner";
-import { BackgroundRemovalTool } from "@/components/BackgroundRemovalTool";
 
 interface Device {
   id: string;
@@ -27,7 +27,6 @@ interface Device {
 const Index = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [showBackgroundRemovalTool, setShowBackgroundRemovalTool] = useState(false);
   const queryClient = useQueryClient();
   const { user, signOut } = useAuth();
 
@@ -109,13 +108,11 @@ const Index = () => {
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg">
-                <img 
-                  src="/lovable-uploads/ec22ca17-2f59-43ab-920c-1c050143ecb5.png" 
-                  alt="Indor Logo" 
-                  className="h-8 w-8" 
-                />
-              </div>
+              <img 
+                src="/lovable-uploads/ec22ca17-2f59-43ab-920c-1c050143ecb5.png" 
+                alt="Indor Logo" 
+                className="h-10 w-10" 
+              />
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   Indor
@@ -129,14 +126,6 @@ const Index = () => {
                 <User className="h-4 w-4" />
                 <span>{user?.email}</span>
               </div>
-              <Button
-                onClick={() => setShowBackgroundRemovalTool(!showBackgroundRemovalTool)}
-                variant="outline"
-                size="sm"
-                className="text-gray-600 hover:text-gray-800"
-              >
-                Remove Logo Background
-              </Button>
               <Button
                 onClick={handleLogout}
                 variant="outline"
@@ -164,13 +153,6 @@ const Index = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        {/* Background Removal Tool */}
-        {showBackgroundRemovalTool && (
-          <div className="mb-8">
-            <BackgroundRemovalTool />
-          </div>
-        )}
-
         {/* Search and Stats */}
         <div className="mb-8 space-y-6">
           {/* Search Bar */}
