@@ -41,7 +41,13 @@ export const SmartDeviceUpload = ({ onDeviceExtracted }: SmartDeviceUploadProps)
       // For now, we'll simulate AI processing and extract device info from narrative
       // In a real implementation, you would send the file/narrative to an AI service
       
-      let deviceData = {};
+      let deviceData = {
+        vendor_name: "",
+        product_name: "",
+        ics_type: "",
+        details: "",
+        lovable_description: ""
+      };
       
       if (narrative.trim()) {
         // Simple keyword extraction from narrative (you can enhance this with actual AI)

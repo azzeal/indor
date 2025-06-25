@@ -74,12 +74,17 @@ export const AddDeviceForm = ({ onSubmit }: AddDeviceFormProps) => {
       }
     }
     
-    // Remove empty string values
-    const cleanedData = Object.fromEntries(
-      Object.entries(deviceData).filter(([_, value]) => value !== "")
-    );
+    // Create clean device object ensuring required fields are present
+    const cleanedData: Device = {
+      vendor_name: deviceData.vendor_name || "",
+      product_name: deviceData.product_name || "",
+      ...(deviceData.ics_type && { ics_type: deviceData.ics_type }),
+      ...(deviceData.url_text && { url_text: deviceData.url_text }),
+      ...(deviceData.actual_url && { actual_url: deviceData.actual_url }),
+      ...(deviceData.details && { details: deviceData.details }),
+    };
     
-    onSubmit(cleanedData as Device);
+    onSubmit(cleanedData);
     
     // Reset form
     setFormData({
