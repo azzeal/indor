@@ -1,14 +1,14 @@
+
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { DeviceCard } from "@/components/DeviceCard";
 import { AddDeviceForm } from "@/components/AddDeviceForm";
-import { GenerateDescriptionsButton } from "@/components/GenerateDescriptionsButton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Zap, Shield, LogOut, Search, User } from "lucide-react";
+import { Plus, Zap, LogOut, Search, User } from "lucide-react";
 import { toast } from "sonner";
 
 interface Device {
@@ -90,7 +90,11 @@ const Index = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
         <div className="text-center">
-          <Shield className="h-12 w-12 animate-spin text-indigo-600 mx-auto mb-4" />
+          <img 
+            src="/lovable-uploads/ec22ca17-2f59-43ab-920c-1c050143ecb5.png" 
+            alt="Loading" 
+            className="h-12 w-12 animate-spin mx-auto mb-4" 
+          />
           <p className="text-lg text-gray-600">Loading devices...</p>
         </div>
       </div>
@@ -105,7 +109,11 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg">
-                <Shield className="h-8 w-8 text-white" />
+                <img 
+                  src="/lovable-uploads/ec22ca17-2f59-43ab-920c-1c050143ecb5.png" 
+                  alt="Indor Logo" 
+                  className="h-8 w-8" 
+                />
               </div>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -129,7 +137,6 @@ const Index = () => {
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
               </Button>
-              <GenerateDescriptionsButton />
               <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                 <DialogTrigger asChild>
                   <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg">
@@ -137,7 +144,7 @@ const Index = () => {
                     Add Device
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-md">
+                <DialogContent className="max-w-2xl">
                   <AddDeviceForm onSubmit={handleAddDevice} />
                 </DialogContent>
               </Dialog>
@@ -172,14 +179,18 @@ const Index = () => {
                   <p className="text-sm font-medium text-gray-600">Total Devices</p>
                   <p className="text-2xl font-bold text-gray-900">{devices?.length || 0}</p>
                 </div>
-                <Shield className="h-8 w-8 text-blue-600" />
+                <img 
+                  src="/lovable-uploads/ec22ca17-2f59-43ab-920c-1c050143ecb5.png" 
+                  alt="Device Icon" 
+                  className="h-8 w-8" 
+                />
               </div>
             </div>
             
             <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">AI Descriptions</p>
+                  <p className="text-sm font-medium text-gray-600">Smart Descriptions</p>
                   <p className="text-2xl font-bold text-gray-900">
                     {devices?.filter(d => d.lovable_description).length || 0}
                   </p>
@@ -211,7 +222,11 @@ const Index = () => {
           </div>
         ) : (
           <div className="text-center py-12">
-            <Shield className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+            <img 
+              src="/lovable-uploads/ec22ca17-2f59-43ab-920c-1c050143ecb5.png" 
+              alt="No devices" 
+              className="h-16 w-16 mx-auto mb-4 opacity-60" 
+            />
             <h3 className="text-xl font-semibold text-gray-600 mb-2">
               {searchTerm ? 'No devices found' : 'No devices found'}
             </h3>
@@ -229,7 +244,7 @@ const Index = () => {
                     Add Your First Device
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-md">
+                <DialogContent className="max-w-2xl">
                   <AddDeviceForm onSubmit={handleAddDevice} />
                 </DialogContent>
               </Dialog>
