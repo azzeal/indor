@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,8 +7,9 @@ import { AddDeviceForm } from "@/components/AddDeviceForm";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Zap, LogOut, Search, User } from "lucide-react";
+import { Plus, Zap, LogOut, Search, User, Bot } from "lucide-react";
 import { toast } from "sonner";
+import { AIDeviceExtractor } from "@/components/AIDeviceExtractor";
 
 interface Device {
   id: string;
@@ -26,6 +26,7 @@ interface Device {
 
 const Index = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isAIDialogOpen, setIsAIDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const queryClient = useQueryClient();
   const { user, signOut } = useAuth();
@@ -82,6 +83,12 @@ const Index = () => {
     addDeviceMutation.mutate(deviceData);
   };
 
+  const handleAddMultipleDevices = (devices: Omit<Device, 'id' | 'created_at' | 'updated_at'>[]) => {
+    devices.forEach(device => {
+      addDeviceMutation.mutate(device);
+    });
+  };
+
   const handleLogout = async () => {
     await signOut();
   };
@@ -114,7 +121,7 @@ const Index = () => {
                 className="h-10 w-10" 
               />
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <h1 className="text-3xl font-bold text-gray-900">
                   Indor
                 </h1>
                 <p className="text-gray-600">ICS Dork Repository</p>
@@ -134,6 +141,13 @@ const Index = () => {
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
+              </Button>
+              <Button
+                onClick={() => setIsAIDialogOpen(true)}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg"
+              >
+                <Bot className="h-4 w-4 mr-2" />
+                Fill Device with AI
               </Button>
               <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                 <DialogTrigger asChild>
@@ -250,6 +264,13 @@ const Index = () => {
           </div>
         )}
       </div>
+
+      {/* AI Device Extractor Dialog */}
+      <AIDeviceExtractor
+        isOpen={isAIDialogOpen}
+        onClose={() => setIsAIDialogOpen(false)}
+        onDevicesExtracted={handleAddMultipleDevices}
+      />
     </div>
   );
 };

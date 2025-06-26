@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { SmartDeviceUpload } from "./SmartDeviceUpload";
 import { DeviceBasicInfoForm } from "./DeviceBasicInfoForm";
 import { DeviceTechnicalDetailsForm } from "./DeviceTechnicalDetailsForm";
 import { DeviceLinksForm } from "./DeviceLinksForm";
@@ -39,8 +38,6 @@ export const AddDeviceForm = ({ onSubmit }: AddDeviceFormProps) => {
   const [linkPairs, setLinkPairs] = useState<LinkPair[]>([
     { text: "", url: "" }
   ]);
-
-  const [showSmartUpload, setShowSmartUpload] = useState(true);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,14 +87,6 @@ export const AddDeviceForm = ({ onSubmit }: AddDeviceFormProps) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSmartExtraction = (extractedData: Device) => {
-    setFormData(prev => ({
-      ...prev,
-      ...extractedData
-    }));
-    setShowSmartUpload(false);
-  };
-
   const addLinkPair = () => {
     setLinkPairs([...linkPairs, { text: "", url: "" }]);
   };
@@ -122,10 +111,6 @@ export const AddDeviceForm = ({ onSubmit }: AddDeviceFormProps) => {
           <span>Add New Device</span>
         </DialogTitle>
       </DialogHeader>
-      
-      {showSmartUpload && (
-        <SmartDeviceUpload onDeviceExtracted={handleSmartExtraction} />
-      )}
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <DeviceBasicInfoForm 
