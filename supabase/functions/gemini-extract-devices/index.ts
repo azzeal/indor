@@ -15,7 +15,7 @@ serve(async (req) => {
   try {
     const { prompt, fileContent, fileName } = await req.json();
     
-    const apiKey = 'AIzaSyBUZdegzDnJS901kyZpmrCxuRc2qIBuAvY';
+    const apiKey = Deno.env.get('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');
     
     let fullPrompt = `
 You are an expert in industrial control systems (ICS) and IoT devices. Extract device information from the provided text or file content and return it as a JSON array of devices.
@@ -44,32 +44,32 @@ User input: ${prompt}
 ${fileContent ? `\nFile content (${fileName}): ${fileContent}` : ''}
 `;
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: fullPrompt
-          }]
-        }],
-        generationConfig: {
-          temperature: 0.3,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 2048,
-        },
+        model: "gpt-4o-mini",
+        store: true,
+        messages: [
+          {
+            role: "user",
+            content: fullPrompt
+          }
+        ],
+        temperature: 0.3,
+        max_tokens: 2048,
       }),
     });
 
     if (!response.ok) {
-      throw new Error(`Gemini API error: ${response.status}`);
+      throw new Error(`OpenAI API error: ${response.status}`);
     }
 
     const data = await response.json();
-    const generatedText = data.candidates[0]?.content?.parts[0]?.text || '';
+    const generatedText = data.choices[0]?.message?.content || '';
     
     let devices = [];
     try {
