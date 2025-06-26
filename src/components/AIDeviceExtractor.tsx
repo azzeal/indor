@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Badge } from "@/components/ui/badge";
 import { Bot, Upload, FileText, Image as ImageIcon, Loader2, Send, Edit, Plus, Check } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Device {
   vendor_name: string;
@@ -60,24 +61,20 @@ export const AIDeviceExtractor = ({ onDevicesExtracted, isOpen, onClose }: AIDev
 
   const processWithGemini = async (prompt: string, fileContent?: string) => {
     try {
-      const response = await fetch('/api/gemini-extract-devices', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const { data, error } = await supabase.functions.invoke('gemini-extract-devices', {
+        body: {
           prompt,
           fileContent,
           fileName: uploadedFile?.name
-        }),
+        }
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to process with Gemini');
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw error;
       }
 
-      const data = await response.json();
-      return data.devices || [];
+      return data?.devices || [];
     } catch (error) {
       console.error('Error processing with Gemini:', error);
       throw error;
