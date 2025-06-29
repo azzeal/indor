@@ -8,10 +8,16 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Plus } from 'lucide-react';
+import { DeviceLinksForm } from '@/components/DeviceLinksForm';
 
 interface AddDeviceFormProps {
   onDeviceAdded: () => void;
   onCancel: () => void;
+}
+
+interface LinkPair {
+  text: string;
+  url: string;
 }
 
 const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ onDeviceAdded, onCancel }) => {
@@ -20,20 +26,28 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ onDeviceAdded, onCancel }
     vendor_name: '',
     product_name: '',
     ics_type: '',
-    actual_url: '',
-    url_text: '',
-    details: '',
     lovable_description: ''
   });
+  
+  const [linkPairs, setLinkPairs] = useState<LinkPair[]>([{ text: "", url: "" }]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
+      // Get the first link for backward compatibility
+      const firstLink = linkPairs.find(link => link.text && link.url);
+      
+      const deviceData = {
+        ...formData,
+        actual_url: firstLink?.url || null,
+        url_text: firstLink?.text || null,
+      };
+
       const { error } = await supabase
         .from('devices')
-        .insert([formData]);
+        .insert([deviceData]);
 
       if (error) {
         console.error('Error adding device:', error);
@@ -44,11 +58,9 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ onDeviceAdded, onCancel }
           vendor_name: '',
           product_name: '',
           ics_type: '',
-          actual_url: '',
-          url_text: '',
-          details: '',
           lovable_description: ''
         });
+        setLinkPairs([{ text: "", url: "" }]);
         onDeviceAdded();
       }
     } catch (error) {
@@ -61,6 +73,20 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ onDeviceAdded, onCancel }
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleAddLink = () => {
+    setLinkPairs(prev => [...prev, { text: "", url: "" }]);
+  };
+
+  const handleRemoveLink = (index: number) => {
+    setLinkPairs(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleUpdateLink = (index: number, field: 'text' | 'url', value: string) => {
+    setLinkPairs(prev => prev.map((link, i) => 
+      i === index ? { ...link, [field]: value } : link
+    ));
   };
 
   return (
@@ -110,37 +136,12 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ onDeviceAdded, onCancel }
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="actual_url">Device URL</Label>
-            <Input
-              id="actual_url"
-              type="url"
-              value={formData.actual_url}
-              onChange={(e) => handleInputChange('actual_url', e.target.value)}
-              placeholder="https://example.com/device"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="url_text">URL Description</Label>
-            <Input
-              id="url_text"
-              value={formData.url_text}
-              onChange={(e) => handleInputChange('url_text', e.target.value)}
-              placeholder="Brief description of the URL"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="details">Technical Details</Label>
-            <Textarea
-              id="details"
-              value={formData.details}
-              onChange={(e) => handleInputChange('details', e.target.value)}
-              placeholder="Enter technical specifications, protocols, ports, etc."
-              rows={4}
-            />
-          </div>
+          <DeviceLinksForm
+            linkPairs={linkPairs}
+            onAddLink={handleAddLink}
+            onRemoveLink={handleRemoveLink}
+            onUpdateLink={handleUpdateLink}
+          />
 
           <div className="space-y-2">
             <Label htmlFor="lovable_description">Description</Label>

@@ -60,7 +60,6 @@ export const EditDeviceForm = ({ device, onSubmit, onDelete }: EditDeviceFormPro
     vendor_name: device.vendor_name,
     product_name: device.product_name,
     ics_type: device.ics_type || "",
-    details: device.details || "",
     lovable_description: device.lovable_description || "",
   });
 
@@ -167,16 +166,12 @@ export const EditDeviceForm = ({ device, onSubmit, onDelete }: EditDeviceFormPro
           </Select>
         </div>
         
-        <div className="space-y-2">
-          <Label htmlFor="details">Technical Details</Label>
-          <Textarea
-            id="details"
-            value={formData.details}
-            onChange={(e) => handleChange("details", e.target.value)}
-            placeholder="Describe the device's functionality and use cases..."
-            rows={3}
-          />
-        </div>
+        <DeviceLinksForm
+          linkPairs={linkPairs}
+          onAddLink={handleAddLink}
+          onRemoveLink={handleRemoveLink}
+          onUpdateLink={handleUpdateLink}
+        />
         
         <div className="space-y-2">
           <Label htmlFor="lovable_description">AI Description</Label>
@@ -189,13 +184,6 @@ export const EditDeviceForm = ({ device, onSubmit, onDelete }: EditDeviceFormPro
             className="bg-green-50 border-green-200"
           />
         </div>
-        
-        <DeviceLinksForm
-          linkPairs={linkPairs}
-          onAddLink={handleAddLink}
-          onRemoveLink={handleRemoveLink}
-          onUpdateLink={handleUpdateLink}
-        />
         
         <div className="flex space-x-3">
           <Button 
