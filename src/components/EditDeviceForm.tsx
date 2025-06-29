@@ -28,7 +28,6 @@ interface Device {
   url_text?: string;
   actual_url?: string;
   details?: string;
-  lovable_description?: string;
   created_at: string;
   updated_at: string;
 }
@@ -60,10 +59,9 @@ export const EditDeviceForm = ({ device, onSubmit, onDelete }: EditDeviceFormPro
     vendor_name: device.vendor_name,
     product_name: device.product_name,
     ics_type: device.ics_type || "",
-    lovable_description: device.lovable_description || "",
+    details: device.details || "",
   });
 
-  // Initialize links from existing device data
   const [linkPairs, setLinkPairs] = useState<LinkPair[]>(() => {
     if (device.url_text && device.actual_url) {
       return [{
@@ -77,10 +75,8 @@ export const EditDeviceForm = ({ device, onSubmit, onDelete }: EditDeviceFormPro
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Get the first link for backward compatibility
     const firstLink = linkPairs.find(link => link.text && link.url);
     
-    // Remove empty string values and create update object
     const updateData = Object.fromEntries(
       Object.entries({
         ...formData,
@@ -174,14 +170,13 @@ export const EditDeviceForm = ({ device, onSubmit, onDelete }: EditDeviceFormPro
         />
         
         <div className="space-y-2">
-          <Label htmlFor="lovable_description">AI Description</Label>
+          <Label htmlFor="details">Description</Label>
           <Textarea
-            id="lovable_description"
-            value={formData.lovable_description}
-            onChange={(e) => handleChange("lovable_description", e.target.value)}
-            placeholder="AI-generated friendly description..."
+            id="details"
+            value={formData.details}
+            onChange={(e) => handleChange("details", e.target.value)}
+            placeholder="Device description..."
             rows={2}
-            className="bg-green-50 border-green-200"
           />
         </div>
         

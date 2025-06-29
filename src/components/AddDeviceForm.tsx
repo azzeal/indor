@@ -26,7 +26,7 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ onDeviceAdded, onCancel }
     vendor_name: '',
     product_name: '',
     ics_type: '',
-    lovable_description: ''
+    details: ''
   });
   
   const [linkPairs, setLinkPairs] = useState<LinkPair[]>([{ text: "", url: "" }]);
@@ -36,7 +36,6 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ onDeviceAdded, onCancel }
     setIsSubmitting(true);
 
     try {
-      // Get the first link for backward compatibility
       const firstLink = linkPairs.find(link => link.text && link.url);
       
       const deviceData = {
@@ -58,7 +57,7 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ onDeviceAdded, onCancel }
           vendor_name: '',
           product_name: '',
           ics_type: '',
-          lovable_description: ''
+          details: ''
         });
         setLinkPairs([{ text: "", url: "" }]);
         onDeviceAdded();
@@ -144,11 +143,11 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ onDeviceAdded, onCancel }
           />
 
           <div className="space-y-2">
-            <Label htmlFor="lovable_description">Description</Label>
+            <Label htmlFor="details">Description</Label>
             <Textarea
-              id="lovable_description"
-              value={formData.lovable_description}
-              onChange={(e) => handleInputChange('lovable_description', e.target.value)}
+              id="details"
+              value={formData.details}
+              onChange={(e) => handleInputChange('details', e.target.value)}
               placeholder="General description of the device"
               rows={3}
             />

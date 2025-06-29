@@ -1,14 +1,15 @@
-
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { DeviceCard } from "@/components/DeviceCard";
 import AddDeviceForm from "@/components/AddDeviceForm";
+import { FileUploadForm } from "@/components/FileUploadForm";
+import { UploadResultsDialog } from "@/components/UploadResultsDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Zap, LogOut, Search, User } from "lucide-react";
+import { Plus, Zap, LogOut, Search, User, Upload } from "lucide-react";
 import { toast } from "sonner";
 
 interface Device {
@@ -19,13 +20,15 @@ interface Device {
   url_text?: string;
   actual_url?: string;
   details?: string;
-  lovable_description?: string;
   created_at: string;
   updated_at: string;
 }
 
 const Index = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const [isResultsDialogOpen, setIsResultsDialogOpen] = useState(false);
+  const [uploadResults, setUploadResults] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const queryClient = useQueryClient();
   const { user, signOut } = useAuth();
@@ -47,19 +50,29 @@ const Index = () => {
     },
   });
 
-  // Filter devices based on search term
   const filteredDevices = devices?.filter(device =>
     device.vendor_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     device.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     device.ics_type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    device.details?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    device.lovable_description?.toLowerCase().includes(searchTerm.toLowerCase())
+    device.details?.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
   const handleDeviceAdded = () => {
     queryClient.invalidateQueries({ queryKey: ['devices'] });
     setIsAddDialogOpen(false);
     toast.success("Device added successfully!");
+  };
+
+  const handleUploadResult = (results: any[]) => {
+    setUploadResults(results);
+    setIsUploadDialogOpen(false);
+    setIsResultsDialogOpen(true);
+  };
+
+  const handleDevicesAdded = () => {
+    queryClient.invalidateQueries({ queryKey: ['devices'] });
+    setIsResultsDialogOpen(false);
+    toast.success("Devices added successfully!");
   };
 
   const handleLogout = async () => {
@@ -115,6 +128,25 @@ const Index = () => {
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
               </Button>
+              
+              <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white border-0 shadow-lg"
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload File
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                  <FileUploadForm 
+                    onUploadResult={handleUploadResult}
+                    onCancel={() => setIsUploadDialogOpen(false)} 
+                  />
+                </DialogContent>
+              </Dialog>
+
               <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                 <DialogTrigger asChild>
                   <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg">
@@ -171,9 +203,9 @@ const Index = () => {
             <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Smart Descriptions</p>
+                  <p className="text-sm font-medium text-gray-600">With Links</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {devices?.filter(d => d.lovable_description).length || 0}
+                    {devices?.filter(d => d.actual_url).length || 0}
                   </p>
                 </div>
                 <Zap className="h-8 w-8 text-purple-600" />
@@ -218,24 +250,51 @@ const Index = () => {
               }
             </p>
             {!searchTerm && (
-              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Your First Device
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl">
-                  <AddDeviceForm 
-                    onDeviceAdded={handleDeviceAdded} 
-                    onCancel={() => setIsAddDialogOpen(false)} 
-                  />
-                </DialogContent>
-              </Dialog>
+              <div className="flex gap-3 justify-center">
+                <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white border-0"
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      Upload File
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl">
+                    <FileUploadForm 
+                      onUploadResult={handleUploadResult}
+                      onCancel={() => setIsUploadDialogOpen(false)} 
+                    />
+                  </DialogContent>
+                </Dialog>
+
+                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Your First Device
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl">
+                    <AddDeviceForm 
+                      onDeviceAdded={handleDeviceAdded} 
+                      onCancel={() => setIsAddDialogOpen(false)} 
+                    />
+                  </DialogContent>
+                </Dialog>
+              </div>
             )}
           </div>
         )}
       </div>
+
+      <UploadResultsDialog
+        isOpen={isResultsDialogOpen}
+        onClose={() => setIsResultsDialogOpen(false)}
+        results={uploadResults}
+        onDevicesAdded={handleDevicesAdded}
+      />
     </div>
   );
 };
