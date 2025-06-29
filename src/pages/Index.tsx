@@ -1,15 +1,15 @@
+
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { DeviceCard } from "@/components/DeviceCard";
-import { AddDeviceForm } from "@/components/AddDeviceForm";
+import AddDeviceForm from "@/components/AddDeviceForm";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Zap, LogOut, Search, User, Bot } from "lucide-react";
+import { Plus, Zap, LogOut, Search, User } from "lucide-react";
 import { toast } from "sonner";
-import { AIDeviceExtractor } from "@/components/AIDeviceExtractor";
 
 interface Device {
   id: string;
@@ -26,7 +26,6 @@ interface Device {
 
 const Index = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [isAIDialogOpen, setIsAIDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const queryClient = useQueryClient();
   const { user, signOut } = useAuth();
@@ -57,36 +56,10 @@ const Index = () => {
     device.lovable_description?.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
-  const addDeviceMutation = useMutation({
-    mutationFn: async (newDevice: Omit<Device, 'id' | 'created_at' | 'updated_at'>) => {
-      const { data, error } = await supabase
-        .from('devices')
-        .insert([newDevice])
-        .select()
-        .single();
-      
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['devices'] });
-      setIsAddDialogOpen(false);
-      toast.success("Device added successfully!");
-    },
-    onError: (error) => {
-      console.error('Error adding device:', error);
-      toast.error("Failed to add device");
-    },
-  });
-
-  const handleAddDevice = (deviceData: Omit<Device, 'id' | 'created_at' | 'updated_at'>) => {
-    addDeviceMutation.mutate(deviceData);
-  };
-
-  const handleAddMultipleDevices = (devices: Omit<Device, 'id' | 'created_at' | 'updated_at'>[]) => {
-    devices.forEach(device => {
-      addDeviceMutation.mutate(device);
-    });
+  const handleDeviceAdded = () => {
+    queryClient.invalidateQueries({ queryKey: ['devices'] });
+    setIsAddDialogOpen(false);
+    toast.success("Device added successfully!");
   };
 
   const handleLogout = async () => {
@@ -142,13 +115,6 @@ const Index = () => {
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
               </Button>
-              <Button
-                onClick={() => setIsAIDialogOpen(true)}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg"
-              >
-                <Bot className="h-4 w-4 mr-2" />
-                Fill Device with AI
-              </Button>
               <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                 <DialogTrigger asChild>
                   <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg">
@@ -157,7 +123,10 @@ const Index = () => {
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl">
-                  <AddDeviceForm onSubmit={handleAddDevice} />
+                  <AddDeviceForm 
+                    onDeviceAdded={handleDeviceAdded} 
+                    onCancel={() => setIsAddDialogOpen(false)} 
+                  />
                 </DialogContent>
               </Dialog>
             </div>
@@ -257,20 +226,16 @@ const Index = () => {
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl">
-                  <AddDeviceForm onSubmit={handleAddDevice} />
+                  <AddDeviceForm 
+                    onDeviceAdded={handleDeviceAdded} 
+                    onCancel={() => setIsAddDialogOpen(false)} 
+                  />
                 </DialogContent>
               </Dialog>
             )}
           </div>
         )}
       </div>
-
-      {/* AI Device Extractor Dialog */}
-      <AIDeviceExtractor
-        isOpen={isAIDialogOpen}
-        onClose={() => setIsAIDialogOpen(false)}
-        onDevicesExtracted={handleAddMultipleDevices}
-      />
     </div>
   );
 };
