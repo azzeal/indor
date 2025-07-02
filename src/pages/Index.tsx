@@ -1,15 +1,14 @@
+
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { DeviceCard } from "@/components/DeviceCard";
 import AddDeviceForm from "@/components/AddDeviceForm";
-import { FileUploadForm } from "@/components/FileUploadForm";
-import { UploadResultsDialog } from "@/components/UploadResultsDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Zap, LogOut, Search, User, Upload } from "lucide-react";
+import { Plus, Zap, LogOut, Search, User } from "lucide-react";
 import { toast } from "sonner";
 
 interface Device {
@@ -26,9 +25,6 @@ interface Device {
 
 const Index = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
-  const [isResultsDialogOpen, setIsResultsDialogOpen] = useState(false);
-  const [uploadResults, setUploadResults] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const queryClient = useQueryClient();
   const { user, signOut } = useAuth();
@@ -61,18 +57,6 @@ const Index = () => {
     queryClient.invalidateQueries({ queryKey: ['devices'] });
     setIsAddDialogOpen(false);
     toast.success("Device added successfully!");
-  };
-
-  const handleUploadResult = (results: any[]) => {
-    setUploadResults(results);
-    setIsUploadDialogOpen(false);
-    setIsResultsDialogOpen(true);
-  };
-
-  const handleDevicesAdded = () => {
-    queryClient.invalidateQueries({ queryKey: ['devices'] });
-    setIsResultsDialogOpen(false);
-    toast.success("Devices added successfully!");
   };
 
   const handleLogout = async () => {
@@ -128,24 +112,6 @@ const Index = () => {
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
               </Button>
-              
-              <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white border-0 shadow-lg"
-                  >
-                    <Upload className="h-4 w-4 mr-2" />
-                    Upload File
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl">
-                  <FileUploadForm 
-                    onUploadResult={handleUploadResult}
-                    onCancel={() => setIsUploadDialogOpen(false)} 
-                  />
-                </DialogContent>
-              </Dialog>
 
               <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                 <DialogTrigger asChild>
@@ -250,51 +216,24 @@ const Index = () => {
               }
             </p>
             {!searchTerm && (
-              <div className="flex gap-3 justify-center">
-                <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button 
-                      variant="outline" 
-                      className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white border-0"
-                    >
-                      <Upload className="h-4 w-4 mr-2" />
-                      Upload File
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-2xl">
-                    <FileUploadForm 
-                      onUploadResult={handleUploadResult}
-                      onCancel={() => setIsUploadDialogOpen(false)} 
-                    />
-                  </DialogContent>
-                </Dialog>
-
-                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Your First Device
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-2xl">
-                    <AddDeviceForm 
-                      onDeviceAdded={handleDeviceAdded} 
-                      onCancel={() => setIsAddDialogOpen(false)} 
-                    />
-                  </DialogContent>
-                </Dialog>
-              </div>
+              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Your First Device
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                  <AddDeviceForm 
+                    onDeviceAdded={handleDeviceAdded} 
+                    onCancel={() => setIsAddDialogOpen(false)} 
+                  />
+                </DialogContent>
+              </Dialog>
             )}
           </div>
         )}
       </div>
-
-      <UploadResultsDialog
-        isOpen={isResultsDialogOpen}
-        onClose={() => setIsResultsDialogOpen(false)}
-        results={uploadResults}
-        onDevicesAdded={handleDevicesAdded}
-      />
     </div>
   );
 };

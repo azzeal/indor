@@ -66,7 +66,7 @@ const Auth = () => {
                   <Input
                     id="username"
                     type="text"
-                    placeholder="Enter username (admin)"
+                    placeholder="Enter username"
                     value={loginForm.username}
                     onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })}
                     className="pl-10"
@@ -84,7 +84,7 @@ const Auth = () => {
                   <Input
                     id="password"
                     type="password"
-                    placeholder="Enter password (password123)"
+                    placeholder="Enter password"
                     value={loginForm.password}
                     onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
                     className="pl-10"
