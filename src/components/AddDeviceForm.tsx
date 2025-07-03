@@ -143,12 +143,12 @@ const AddDeviceForm: React.FC<AddDeviceFormProps> = ({ onDeviceAdded, onCancel }
           />
 
           <div className="space-y-2">
-            <Label htmlFor="details">Description</Label>
+            <Label htmlFor="details">Vulnerability</Label>
             <Textarea
               id="details"
               value={formData.details}
               onChange={(e) => handleInputChange('details', e.target.value)}
-              placeholder="General description of the device"
+              placeholder="Vulnerability details of the device"
               rows={3}
             />
           </div>

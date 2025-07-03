@@ -170,12 +170,12 @@ export const EditDeviceForm = ({ device, onSubmit, onDelete }: EditDeviceFormPro
         />
         
         <div className="space-y-2">
-          <Label htmlFor="details">Description</Label>
+          <Label htmlFor="details">Vulnerability</Label>
           <Textarea
             id="details"
             value={formData.details}
             onChange={(e) => handleChange("details", e.target.value)}
-            placeholder="Device description..."
+            placeholder="Vulnerability details..."
             rows={2}
           />
         </div>

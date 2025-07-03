@@ -25,7 +25,7 @@ export const DeviceLinksForm = ({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <Label className="text-base font-semibold">Links & References</Label>
+        <Label className="text-base font-semibold">Source</Label>
         <Button
           type="button"
           onClick={onAddLink}
