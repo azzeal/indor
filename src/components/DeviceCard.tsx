@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -119,7 +120,7 @@ export const DeviceCard = ({ device }: DeviceCardProps) => {
 
       console.log('Sending vulnerability text to n8n:', vulnerabilityText);
 
-      const response = await fetch('https://muhsofyan.app.n8n.cloud/webhook-test/6ad2d7fc-c8b4-4e35-bbd2-8aaa0aeb6431', {
+      const response = await fetch('https://muhsofyan.app.n8n.cloud/webhook/6ad2d7fc-c8b4-4e35-bbd2-8aaa0aeb6431', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
