@@ -1,73 +1,81 @@
-# Welcome to your Lovable project
 
+
+
+
+
+# Indor - Dasbor Kerentanan & Perangkat OT/ICS
+
+
+
+> Sebuah dasbor web modern untuk mengelola, melacak, dan menganalisis perangkat Teknologi Operasi (OT) / Sistem Kontrol Industri (ICS) beserta kerentanan terkait, dilengkapi dengan penjelasan berbasis AI.
 ## Project info
 
-**URL**: https://lovable.dev/projects/5f0ac479-103d-4a39-99d3-e0463cab60df
+**URL**: https://indor-fgvwjoltf-azzeals-orgs-projects.vercel.app
 
-## How can I edit this code?
+![Tampilan Aplikasi Indor](httpsd://user-images.githubusercontent.com/18204593/254421677-943e6b34-8b63-47a3-b5b6-76495679942a.png)
+*(**Catatan**: Anda bisa mengganti URL di atas dengan link ke screenshot Anda sendiri setelah mengunggahnya ke GitHub)*
 
-There are several ways of editing your application.
+---
 
-**Use Lovable**
+## 📖 Tentang Proyek
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/5f0ac479-103d-4a39-99d3-e0463cab60df) and start prompting.
+**Indor** adalah sebuah platform terpusat yang dirancang untuk membantu para profesional keamanan siber, analis, dan peneliti dalam menginventarisasi dan memahami lanskap keamanan sistem industri. Proyek ini mengatasi tantangan dalam melacak perangkat OT/ICS yang tersebar dan kerentanan (CVE) yang terkait dengannya dengan menyediakan satu antarmuka yang bersih, cepat, dan fungsional.
 
-Changes made via Lovable will be committed automatically to this repo.
+Fitur unggulan dari proyek ini adalah integrasi dengan AI untuk memberikan penjelasan kontekstual terhadap kode kerentanan (CVE), sehingga mempercepat proses analisis dan pengambilan keputusan.
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## ✨ Fitur Utama
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+* **📊 Dasbor Interaktif:** Tampilan ringkasan data dengan kartu statistik untuk "Total Perangkat", "Perangkat dengan Link", dan "Hasil Pencarian".
+* **➕ Manajemen Perangkat:** Antarmuka untuk menambah (`+ Add Device`), melihat, mengubah, dan menghapus data perangkat (CRUD).
+* **🔍 Pencarian Cepat:** Fungsi pencarian yang komprehensif untuk memfilter perangkat berdasarkan vendor, produk, tipe, atau deskripsi.
+* **🤖 Penjelasan Kerentanan Berbasis AI:** Fitur inovatif "AI Explain Vulnerability" untuk mendapatkan penjelasan ringkas dan mudah dipahami mengenai kode CVE yang terkait.
+* **🔗 Pelacakan CVE & Referensi:** Setiap entri dapat ditautkan dengan kode CVE spesifik dan link eksternal untuk referensi lebih lanjut.
+* **🔐 Autentikasi Pengguna:** Sistem login dan logout untuk administrator, memastikan data hanya dapat dikelola oleh pengguna yang berwenang.
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 🛠️ Dibangun Dengan
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Aplikasi ini dibangun menggunakan tumpukan teknologi modern yang berfokus pada kecepatan dan pengalaman pengguna:
 
-# Step 3: Install the necessary dependencies.
-npm i
+* **Frontend:** **React.js** (atau **Next.js**)
+* **Backend & Database:** **Supabase** (PostgreSQL, Authentication, Auto-generated APIs)
+* **Styling:** **Tailwind CSS**
+* **AI Integration:** API dari Large Language Model Gemini API
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+---
 
-**Edit a file directly in GitHub**
+## 🚀 Panduan Instalasi
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Untuk menjalankan proyek ini di lingkungan lokal Anda, ikuti langkah-langkah berikut.
 
-**Use GitHub Codespaces**
+### Prasyarat
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+* **Node.js** (versi 18.x atau lebih baru)
+* **npm** atau **yarn**
+* Akun **Supabase** gratis
 
-## What technologies are used for this project?
 
-This project is built with:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🎛️ Penggunaan
 
-## How can I deploy this project?
+* Akses halaman utama untuk melihat dasbor.
+* Gunakan tombol "Logout" untuk keluar dari sesi admin.
+* Gunakan tombol "+ Add Device" untuk menambahkan data perangkat baru (memerlukan login).
+* Klik "AI Explain Vulnerability" untuk memicu permintaan penjelasan ke model AI.
 
-Simply open [Lovable](https://lovable.dev/projects/5f0ac479-103d-4a39-99d3-e0463cab60df) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
+## 🤝 Kontribusi
 
-Yes, you can!
+Kontribusi membuat komunitas sumber terbuka menjadi tempat yang luar biasa untuk belajar, menginspirasi, dan berkreasi. Setiap kontribusi yang Anda buat sangat **dihargai**.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+Jika Anda memiliki saran untuk membuatnya lebih baik, silakan *fork* repo ini dan buat *pull request*. Anda juga bisa membuka *issue* dengan tag "enhancement". Jangan lupa beri bintang pada proyek ini! Terima kasih!
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+---
+
+## 📜 Lisensi
+
+Didistribusikan di bawah Lisensi MIT. Lihat `LICENSE.txt` untuk informasi lebih lanjut.
