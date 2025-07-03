@@ -114,24 +114,17 @@ export const DeviceCard = ({ device }: DeviceCardProps) => {
     setAiExplanation('');
 
     try {
-      const deviceData = {
-        vendor_name: device.vendor_name,
-        product_name: device.product_name,
-        ics_type: device.ics_type || '',
-        details: device.details || '',
-        url_text: device.url_text || '',
-        actual_url: device.actual_url || '',
-        lovable_description: device.lovable_description || ''
-      };
+      // Only send the vulnerability text (details field) to n8n
+      const vulnerabilityText = device.details || '';
 
-      console.log('Sending device data to n8n:', deviceData);
+      console.log('Sending vulnerability text to n8n:', vulnerabilityText);
 
       const response = await fetch('https://muhsofyan.app.n8n.cloud/webhook-test/6ad2d7fc-c8b4-4e35-bbd2-8aaa0aeb6431', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(deviceData),
+        body: JSON.stringify({ vulnerability: vulnerabilityText }),
       });
 
       if (!response.ok) {
