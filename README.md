@@ -10,7 +10,7 @@
 > Sebuah dasbor web modern untuk mengelola, melacak, dan menganalisis perangkat Teknologi Operasi (OT) / Sistem Kontrol Industri (ICS) beserta kerentanan terkait, dilengkapi dengan penjelasan berbasis AI.
 ## Project info
 
-**URL**: https://indor-fgvwjoltf-azzeals-orgs-projects.vercel.app
+**URL**: https://indor.vercel.app
 
 ![Tampilan Aplikasi Indor](httpsd://user-images.githubusercontent.com/18204593/254421677-943e6b34-8b63-47a3-b5b6-76495679942a.png)
 
