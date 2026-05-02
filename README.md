@@ -45,6 +45,7 @@ Aplikasi ini dibangun menggunakan tumpukan teknologi modern yang berfokus pada k
 * **Backend & Database:** **Supabase** (PostgreSQL, Authentication, Auto-generated APIs)
 * **Styling:** **Tailwind CSS**
 * **AI Integration:** API dari Large Language Model Gemini API
+  ![Tampilan Penjelasan Kerentanan](n8n.png)
 
 ---
 
