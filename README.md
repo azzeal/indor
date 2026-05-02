@@ -31,7 +31,7 @@ Fitur unggulan dari proyek ini adalah integrasi dengan AI untuk memberikan penje
 * **➕ Manajemen Perangkat:** Antarmuka untuk menambah (`+ Add Device`), melihat, mengubah, dan menghapus data perangkat (CRUD).
 * **🔍 Pencarian Cepat:** Fungsi pencarian yang komprehensif untuk memfilter perangkat berdasarkan vendor, produk, tipe, atau deskripsi.
 * **🤖 Penjelasan Kerentanan Berbasis AI:** Fitur inovatif "AI Explain Vulnerability" untuk mendapatkan penjelasan ringkas dan mudah dipahami mengenai kode CVE yang terkait.
-![Tampilan Penjelasan Kerentanan](Screenshot 2026-05-02 090659.png)
+        ![Tampilan Penjelasan Kerentanan](aisum.png)
 * **🔗 Pelacakan CVE & Referensi:** Setiap entri dapat ditautkan dengan kode CVE spesifik dan link eksternal untuk referensi lebih lanjut.
 * **🔐 Autentikasi Pengguna:** Sistem login dan logout untuk administrator, memastikan data hanya dapat dikelola oleh pengguna yang berwenang.
 
